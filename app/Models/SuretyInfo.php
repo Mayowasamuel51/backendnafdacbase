@@ -9,9 +9,11 @@ class SuretyInfo extends Model
 {
     use HasFactory;
     protected $primaryKey = 'id';
-    
     protected $table = 'surety_infos';
     protected $guarded=[];
+
+    
+    
     public function manysurety(){
         return $this->belongsTo(SupectInfo::class, 'user_id');
     }

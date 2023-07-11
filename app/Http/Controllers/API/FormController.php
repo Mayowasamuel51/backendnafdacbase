@@ -14,7 +14,12 @@ use Illuminate\Support\Facades\Validator;
 
 class FormController extends Controller
 {
-
+    public function more_info_surety($martic_number){
+        return response()->json([
+            
+            'surety' => SuretyInfo::where('martic_number', $martic_number)->get(),
+        ]);
+    }
     public function more_info($martic_number)
     {
         return response()->json([
@@ -97,7 +102,6 @@ class FormController extends Controller
     public function suspect(Request $request)
     {
         $validator = Validator::make($request->all(), [
-
             'unitId' => 'required',
             'firstname' => 'required',
             'lastname' => 'required',
@@ -256,13 +260,12 @@ class FormController extends Controller
         }
     }
 
-    public function surety(Request $request, $id)
-    {
+    public function surety(Request $request, $martic_number)  {
         $validator = Validator::make($request->all(), [
-            'firstname' => 'required',
-            'lastname' => 'required',
-            'middlename' => 'required',
-            'unitId' => 'required'
+            // 'firstname' => 'required',
+            // 'lastname' => 'required',
+            // 'middlename' => 'required',
+            // 'unitId' => 'required'
         ]);
         if ($validator->fails()) {
             return response()->json([
@@ -270,23 +273,12 @@ class FormController extends Controller
                 'errors' => $validator->messages(),
             ]);
         } else {
-
-            $img = $request->affix_left;
-            $folderPath = "public/uploads/";
-            $image_parts = explode(";base64,", $img);
-            $image_type_aux = explode("data:image/jpeg", $image_parts[0]);
-            $image_type = $image_type_aux[1];
-            $image_base64 = base64_decode($image_parts[1], true);
-            $fileName =  uniqid() . '.png';
-            $file = $folderPath . $fileName;
-            Storage::put($file, $image_base64);
-
-
             // yi4L(k!]{ep@
-            $findSuspect_id = SupectInfo::where('martic_number', $id)->first();
+            // $findSuspect_id = SupectInfo::where('martic_number',  $martic_number)->first();
+            $findSuspect_id = SupectInfo::find($martic_number);
             $surety_infos = new SuretyInfo;
             $surety_infos->user_id = $findSuspect_id->martic_number;
-            $surety_infos->unitId = $request->unitId;
+            $surety_infos->unitId = $findSuspect_id->martic_number;
             $surety_infos->tertiary_i = $request->input('tertiary_i');
             $surety_infos->tertiary_y = $request->input('tertiary_y');
             $surety_infos->tertiary_yg = $request->input('tertiary_yg');
@@ -321,7 +313,7 @@ class FormController extends Controller
             $surety_infos->prior_surety = $request->prior_surety;
             $surety_infos->suspect_name = $request->suspect_name;
             $surety_infos->date_signature = $request->date_signature;
-            $surety_infos->affix_left = $fileName;
+            // $surety_infos->affix_left = $fileName;
             $surety_infos->firstname = $request->firstname;
             $surety_infos->lastname = $request->lastname;
             $surety_infos->middlename = $request->middlename;
@@ -337,14 +329,15 @@ class FormController extends Controller
             $surety_infos->office_shop = $request->office_shop;
             $surety_infos->martic_number = $request->martic_number;
 
+            $findSuspect_id->postsuretys()->save($surety_infos);
             $surety_infos->save();
-
             if ($findSuspect_id) {
                 return response()->json([
                     'status' => 200,
                     'data' => $surety_infos,
                     'message' => ' U have successfully create a surety  in the system '
                 ]);
+              
             } else {
                 return response()->json([
                     'status' => 401,

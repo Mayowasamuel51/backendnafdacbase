@@ -14,7 +14,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
-        return  response()->json( [
+        return  response()->json([
             'status' => 200,
             'message' => 'u have logout '
         ]);
@@ -39,8 +39,8 @@ class AuthController extends Controller
 
             // if role === frontdesk and checking the tokenPass and state , unitId and password then grant access  to see suspect in unitId 
             // having mutple middlewares  etc unitIds in state
-            $user = User::where('unitId', $request->unitId)->first();  
-          
+            $user = User::where('unitId', $request->unitId)->first();
+
             if (!$user ||  !Hash::check($request->password, $user->password)) {
                 return response()->json([
                     'status' => 401,
@@ -52,23 +52,25 @@ class AuthController extends Controller
                 if ($user->unitId === 'unit1Osun') {
                     $tokenpass  =  User::where('tokenpass', $request->tokenpass)->first();
                     // $ipo_where = User::where('role', $request->role === 'ipo')->where('unitId', $request->unitId)->first();
-                    if ($user->unitId === 'unit1Osun' &&   $request->role === 'frontdesk'
-                       && $request->tokenpass ===  'frontdes') {
-                    
+                    if (
+                        $user->unitId === 'unit1Osun' &&   $request->role === 'frontdesk'
+                        && $request->tokenpass ===  'frontdes'
+                    ) {
+
                         return response()->json([
                             'role' => 'frontdesk',
-                            'unitId'=>'unit1Osun',
+                            'unitId' => 'unit1Osun',
                             'status' => 200,
                             'data' => 'THIS IS DATA FROM unit1OSUN',
                             'token' => $token_user,
-                            'tokenpass'=>$tokenpass,
+                            'tokenpass' => $tokenpass,
                             'message' => 'welcome as  frontdesk  officer'
                         ]);
                     }
-                    if ( $user->unitId === 'unit1Osun' && $request->role === 'ipo'  &&  $request->tokenpass ===  'ipo1' ) {
+                    if ($user->unitId === 'unit1Osun' && $request->role === 'ipo'  &&  $request->tokenpass ===  'ipo1') {
                         return response()->json([
                             'role' => 'ipo',
-                            'unitId'=>'unit1Osun',
+                            'unitId' => 'unit1Osun',
                             'status' => 200,
                             'token' => $token_user,
                             'data' => 'THIS IS DATA FROM unit1OSUN',
@@ -76,36 +78,37 @@ class AuthController extends Controller
                         ]);
                     }
                     if (
-                        $user->unitId === 'unit1Osun' && $request->role === 'rf'  &&   $request->tokenpass ===  'rf1'  ) {
+                        $user->unitId === 'unit1Osun' && $request->role === 'rf'  &&   $request->tokenpass ===  'rf1'
+                    ) {
                         $rfdata = DB::select('select * from supect_infos where  unitId = :unitId  ', ['unitId' => 'unit1Osun']);
                         return response()->json([
                             'role' => 'rf',
-                            'datar'=>$rfdata,
+                            'datar' => $rfdata,
                             'status' => 200,
-                            'unitId'=>'unit1Osun',
+                            'unitId' => 'unit1Osun',
                             'token' => $token_user,
                             'data' => 'THIS IS DATA FROM unit1OSUN',
                             'message' => 'welcome as  RF  officer'
                         ]);
                     }
-                    if (
-                        $user->unitId === 'unit1Osun' && $request->role === 'admin'  &&  $request->tokenpass ===  'ipo1'
+                    if (   $user->unitId === 'unit1Osun' && $request->role === 'admin'  &&  $request->tokenpass ===  'admin1'
                     ) {
+                        $admin = DB::select('select * from supect_infos where  unitId = :unitId  ', ['unitId' => 'unit1Osun']);
                         return response()->json([
                             'role' => 'admin',
                             'status' => 200,
-                            'unitId'=>'unit1Osun',
+                            'unitId' => 'unit1Osun',
                             'token' => $token_user,
-                            'data' => 'THIS IS DATA FROM unit1OSUN',
+                            'data' => $admin,
                             'message' => 'welcome as  admin  officer'
                         ]);
                     }
 
-                    if ( $user->unitId === 'unit1Osun' && $request->role === 'oc'  && $request->tokenpass ===  'oc1') {
+                    if ($user->unitId === 'unit1Osun' && $request->role === 'oc'  && $request->tokenpass ===  'oc1') {
                         return response()->json([
                             'role' => 'oc',
                             'status' => 200,
-                            'unitId'=>'unit1Osun',
+                            'unitId' => 'unit1Osun',
                             'token' => $token_user,
                             'data' => 'THIS IS DATA FROM unit1OSUN',
                             'message' => 'welcome as  oc  officer'
@@ -117,8 +120,7 @@ class AuthController extends Controller
                         ]);
                     }
                     //// UNIT20SUN
-                }
-                 else if ($user->unitId === 'unit2Osun') {
+                } else if ($user->unitId === 'unit2Osun') {
                     if (
                         $user->unitId === 'unit2Osun' && $request->role === 'frontdesk'  &&
                         $request->tokenpass ===  'frontdesk2'
@@ -126,9 +128,9 @@ class AuthController extends Controller
                         $frdata = DB::select('select * from supect_infos where  unitId = :unitId  ', ['unitId' => 'unit2Osun']);
                         return response()->json([
                             'role' => 'frontdesk',
-                            'unitId'=>'unit2Osun',
+                            'unitId' => 'unit2Osun',
                             'status' => 200,
-                            'datafr'=>$frdata,
+                            'datafr' => $frdata,
                             'data' => 'THIS IS DATA OFFICER FOR unit2Osun',
                             'token' => $token_user,
                             'message' => 'welcome as  frontdesk  officer'

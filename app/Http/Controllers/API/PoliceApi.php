@@ -7,13 +7,14 @@ use App\Models\policofficer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\policofficers;
 use Illuminate\Support\Facades\Validator;
 
 class PoliceApi extends Controller
 {
     //
     public function getAllOfficers($unitId){
-        $results = policofficer::where('unitId', $unitId)->get();
+        $results = policofficers::where('unitId', $unitId)->get();
         return [
             'status' => 200,
             'data' => $results
@@ -53,7 +54,7 @@ class PoliceApi extends Controller
             
             
             
-            policofficer::create([
+            policofficers::create([
                 'suspect_name' => $request->suspect_name,
                 'unitId'=>$request->unitId,
                 'height_of_suspect' => $request->height_of_suspect,
@@ -100,8 +101,7 @@ class PoliceApi extends Controller
         ]);
     }
 
-    public function officeripoupdate(Request $request, $id)
-    {
+    public function officeripoupdate(Request $request, $id){
         $validator = Validator::make($request->all(), [
             'officer_name' => 'required',
             'officer_signature_date' => 'required',
@@ -112,7 +112,7 @@ class PoliceApi extends Controller
                 'errors' => $validator->messages(),
             ]);
         } else {
-        $officer  = policofficer::findOrFail($id);
+        $officer  = policofficers::findOrFail($id);
         $suspect_infomations = SupectInfo::where('martic_number', $request->martic_number)->first();
         if ($officer) {
             $officer->officer_name = $request->officer_name;
@@ -151,7 +151,7 @@ class PoliceApi extends Controller
                 'errors' => $validator->messages(),
             ]);
         } else {
-        $officer  = policofficer::findOrFail($id);
+        $officer  = policofficers::findOrFail($id);
         if ($officer) {
             $officer->oc_name = $request->oc_name;
             $officer->oc_signature_date = $request->oc_signature_date;
